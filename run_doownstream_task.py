@@ -53,7 +53,8 @@ def main(args):
         batch_size=args.batch_size,
         batches_per_epoch=args.num_batches_per_epoch,
         split=args.split,
-        mode='training'
+        mode='training',
+        examples_num=args.examples_num
     )
     num_classes = train_dataset.num_classes
 
@@ -63,7 +64,8 @@ def main(args):
         batch_size=args.batch_size,
         batches_per_epoch=args.num_batches_per_epoch,
         split=args.split,
-        mode='validation'
+        mode='validation',
+        examples_num=args.examples_num
     )
 
     test_dataset = DownstreamDataset(
@@ -72,7 +74,8 @@ def main(args):
         batch_size=args.batch_size,
         batches_per_epoch=args.num_batches_per_epoch,
         split=args.split,
-        mode='test'
+        mode='test',
+        examples_num=args.examples_num
     )
 
     train_dataloader = DataLoader(
@@ -178,6 +181,7 @@ def main(args):
     #     test_metrics = trainer.test(model, datamodule=datamodule, ckpt_path=f'/path/to/downstream.ckpt')
     # df = pd.DataFrame(model.test_results)
     # df.to_csv("/path/to/results.csv", index=False)
+
 
 if __name__ == '__main__':
     main(parse_args())
