@@ -11,10 +11,8 @@ import torch
 from torch.utils.data import DataLoader
 
 import pytorch_lightning as pl
-from pytorch_lightning.loggers import TensorBoardLogger
+from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint, BackboneFinetuning
-
-from clearml import Task
 
 from hb_ssl.default_params import *
 from hb_ssl.eval.downstream_dataset import DownstreamDataset
@@ -48,11 +46,6 @@ def parse_args():
     return parser.parse_args()
 
 def main(args):
-
-    # Task.init(
-    #     project_name='Label',
-    #     task_name='amos_mri_fine_tuning_equal_contribution_reproduction_1convhead_32x5_50000_split4'
-    # )
 
     train_dataset = DownstreamDataset(
         dataset=args.dataset,
@@ -156,10 +149,7 @@ def main(args):
     else:
         raise ValueError(args.setup)
 
-    logger = TensorBoardLogger(
-        save_dir=args.log_dir,
-        name=f'eval/{args.dataset}/{args.setup}/split_{args.split}'
-    )
+    logger = WandbLogger(save_dir=args.log_dir, name='amos_mri_from_scratch_equal_contrib_1convhead_32x5_50000_4', project='ssl'),
     trainer = pl.Trainer(
         logger=logger,
         callbacks=callbacks,

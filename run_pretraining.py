@@ -2,12 +2,11 @@
 # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 # os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
-from clearml import Task
 from argparse import ArgumentParser
 from torch.utils.data import DataLoader
 
 import pytorch_lightning as pl
-from pytorch_lightning.loggers import TensorBoardLogger
+from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 from hb_ssl.default_params import *
@@ -34,11 +33,6 @@ def parse_args():
 
 
 def main(args):
-
-    Task.init(
-        project_name='Label',
-        task_name='nako1000_pretraining_equal_contribution_reproduction_32x5_50000'
-    )
 
     patch_size = tuple(args.patch_size)
 
@@ -68,7 +62,7 @@ def main(args):
     checkpoint_callback_2 = ModelCheckpoint(save_top_k=5, monitor='epoch', mode='max', every_n_epochs=100, filename='{epoch:02d}')
 
     trainer = pl.Trainer(
-        logger=TensorBoardLogger(save_dir=args.log_dir, name='pretrain/'),
+        logger=WandbLogger(save_dir=args.log_dir, name='nakoregion2_fpn', project='ssl'),
         callbacks=[checkpoint_callback_2],
         accelerator='gpu',
         max_epochs=500,
