@@ -105,9 +105,9 @@ def main(args):
         head = FPNLinearHead(args.base_channels, args.num_scales, num_classes)
         model = EndToEnd(backbone, head, patch_size=tuple(args.patch_size))
         callbacks = [
-            ModelCheckpoint(save_top_k=1, monitor='val/head_0_avg_dice_score', filename='best_avg', mode='max'),
-            ModelCheckpoint(save_top_k=1, monitor='val/head_0_smooth_dice_score', filename='best_smooth', mode='max'),
-            ModelCheckpoint(save_top_k=1, filename='last'),
+            ModelCheckpoint(dirpath=args.log_dir, save_top_k=1, monitor='val/head_0_avg_dice_score', filename='best_avg', mode='max'),
+            ModelCheckpoint(dirpath=args.log_dir, save_top_k=1, monitor='val/head_0_smooth_dice_score', filename='best_smooth', mode='max'),
+            ModelCheckpoint(dirpath=args.log_dir, save_top_k=1, filename='last'),
         ]
     elif args.setup == 'probing':
         if args.ckpt is not None:
@@ -126,9 +126,9 @@ def main(args):
         ]
         model = Probing(backbone, *heads, patch_size=tuple(args.patch_size))
         callbacks = [
-            ModelCheckpoint(save_top_k=1, monitor='val/head_0_avg_dice_score', filename='best_avg', mode='max'),
-            ModelCheckpoint(save_top_k=1, monitor='val/head_0_smooth_dice_score', filename='best_smooth', mode='max'),
-            ModelCheckpoint(save_top_k=1, filename='last'),
+            ModelCheckpoint(dirpath=args.log_dir, save_top_k=1, monitor='val/head_0_avg_dice_score', filename='best_avg', mode='max'),
+            ModelCheckpoint(dirpath=args.log_dir, save_top_k=1, monitor='val/head_0_smooth_dice_score', filename='best_smooth', mode='max'),
+            ModelCheckpoint(dirpath=args.log_dir, save_top_k=1, filename='last'),
         ]
     elif args.setup == 'fine-tuning':
 
@@ -145,14 +145,16 @@ def main(args):
         model = EndToEnd(backbone, head, patch_size=tuple(args.patch_size))
         callbacks = [
             BackboneFinetuning(unfreeze_backbone_at_epoch=args.warmup_epochs),
-            ModelCheckpoint(save_top_k=1, monitor='val/head_0_avg_dice_score', filename='best_avg', mode='max'),
-            ModelCheckpoint(save_top_k=1, monitor='val/head_0_smooth_dice_score', filename='best_smooth', mode='max'),
-            ModelCheckpoint(save_top_k=1, filename='last'),
+            ModelCheckpoint(dirpath=args.log_dir, save_top_k=1, monitor='val/head_0_avg_dice_score', filename='best_avg', mode='max'),
+            ModelCheckpoint(dirpath=args.log_dir, save_top_k=1, monitor='val/head_0_smooth_dice_score', filename='best_smooth', mode='max'),
+            ModelCheckpoint(dirpath=args.log_dir, save_top_k=1, filename='last'),
         ]
     else:
         raise ValueError(args.setup)
 
-    logger = WandbLogger(save_dir=args.log_dir, name='amos_mri_from_scratch_equal_contrib_1convhead_32x5_50000_4', project='ssl'),
+    run = wandb.init(project='ssl', name='amos_mri_from_scratch_equal_contrib_1convhead_32x5_50000_4')
+    logger = WandbLogger(experiment=run)
+
     trainer = pl.Trainer(
         logger=logger,
         callbacks=callbacks,

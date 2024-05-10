@@ -2,6 +2,8 @@
 # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 # os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
+import wandb
+
 from argparse import ArgumentParser
 from torch.utils.data import DataLoader
 
@@ -59,10 +61,13 @@ def main(args):
         num_scales=args.num_scales,
     )
 
-    checkpoint_callback_2 = ModelCheckpoint(save_top_k=5, monitor='epoch', mode='max', every_n_epochs=100, filename='{epoch:02d}')
+    checkpoint_callback_2 = ModelCheckpoint(dirpath=args.log_dir, save_top_k=5, monitor='epoch', mode='max', every_n_epochs=100, filename='{epoch:02d}')
+
+    run = wandb.init(project='ssl', name='nakoregion2_fpn')
+    logger = WandbLogger(experiment=run)
 
     trainer = pl.Trainer(
-        logger=WandbLogger(save_dir=args.log_dir, name='nakoregion2_fpn', project='ssl'),
+        logger=logger,
         callbacks=[checkpoint_callback_2],
         accelerator='gpu',
         max_epochs=500,
