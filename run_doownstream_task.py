@@ -2,6 +2,8 @@
 # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 # os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
+import os
+import wandb
 import pandas as pd
 
 from argparse import ArgumentParser
@@ -20,6 +22,7 @@ from hb_ssl.nn import FPN3d, FPNLinearHead, FPNNonLinearHead
 from hb_ssl.eval.end_to_end import EndToEnd
 from hb_ssl.eval.probing import Probing
 from hb_ssl.utils.misc import save_json
+
 
 def parse_args():
     parser = ArgumentParser()
@@ -164,9 +167,8 @@ def main(args):
 
     trainer.fit(model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
 
-    log_dir = Path(logger.log_dir)
-    test_metrics = trainer.test(model, dataloaders=test_dataloader, ckpt_path=log_dir / 'checkpoints/best_avg.ckpt')
-    save_json(test_metrics, log_dir / 'test_metrics.json')
+    test_metrics = trainer.test(model, dataloaders=test_dataloader, ckpt_path=os.path.join(args.log_dir, 'best_avg.ckpt'))
+    save_json(test_metrics, os.path.join(args.log_dir, 'test_metrics.json'))
 
     # for split in range(5):
     #     datamodule = AMOSMRI(
