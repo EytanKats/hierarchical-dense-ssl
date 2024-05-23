@@ -168,15 +168,15 @@ class DownstreamDataset(Dataset):
 
         center_slice = image.shape[2] // 2
 
-        plt.imshow(image[:, :, center_slice], cmap='gray')
-        plt.colorbar()
-        plt.show()
-        plt.close()
-
-        plt.imshow(mask[:, :, center_slice])
-        plt.colorbar()
-        plt.show()
-        plt.close()
+        # plt.imshow(image[:, :, center_slice], cmap='gray')
+        # plt.colorbar()
+        # plt.show()
+        # plt.close()
+        #
+        # plt.imshow(mask[:, :, center_slice])
+        # plt.colorbar()
+        # plt.show()
+        # plt.close()
 
         mask = labels_to_onehot(mask, labels_range=range(1, self.num_classes + 1))
 
