@@ -15,16 +15,17 @@ from hb_ssl.default_params import *
 from hb_ssl.nn import FPN3d
 from hb_ssl.pretrain.model import Vox2Vec
 from hb_ssl.pretrain.pretraining_dataset import PretrainingDataset
+from hb_ssl.pretrain.pretraining_multimodal_dataset import PretrainingMultimodalDataset
 
 
 def parse_args():
     parser = ArgumentParser()
 
-    parser.add_argument('--pretraining_dataset', default='nako')
-    parser.add_argument('--log_dir', default='/path/to/output_dir/')
+    parser.add_argument('--pretraining_dataset', default='ct_mr')  # multimodal, nako, flare_amos, ct_mr
+    parser.add_argument('--log_dir', default='/home/kats/storage/staff/eytankats/projects/multimodal_ssl/experiments/pretraining_smclr_ctmr/')
 
     parser.add_argument('--patch_size', nargs='+', type=int, default=PATCH_SIZE)
-    parser.add_argument('--pretrain_batch_size', type=int, default=10)
+    parser.add_argument('--pretrain_batch_size', type=int, default=5)
     parser.add_argument('--pretrain_num_workers', type=int, default=8)
     parser.add_argument('--num_batches_per_epoch', type=int, default=100)
 
@@ -38,13 +39,22 @@ def main(args):
 
     patch_size = tuple(args.patch_size)
 
-    pretrain_dataset = PretrainingDataset(
-        patch_size=patch_size,
-        max_num_voxels_per_patch=MAX_NUM_VOXELS_PER_PATCH,
-        batch_size=args.pretrain_batch_size,
-        batches_per_epoch=args.num_batches_per_epoch,
-        pretraining_dataset=args.pretraining_dataset
-    )
+    if args.pretraining_dataset == 'multimodal':
+        pretrain_dataset = PretrainingMultimodalDataset(
+            patch_size=patch_size,
+            max_num_voxels_per_patch=MAX_NUM_VOXELS_PER_PATCH,
+            batch_size=args.pretrain_batch_size,
+            batches_per_epoch=args.num_batches_per_epoch,
+            pretraining_dataset=args.pretraining_dataset
+        )
+    else:
+        pretrain_dataset = PretrainingDataset(
+            patch_size=patch_size,
+            max_num_voxels_per_patch=MAX_NUM_VOXELS_PER_PATCH,
+            batch_size=args.pretrain_batch_size,
+            batches_per_epoch=args.num_batches_per_epoch,
+            pretraining_dataset=args.pretraining_dataset
+        )
 
     pretrain_dataloader = DataLoader(
         dataset=pretrain_dataset,
