@@ -13,7 +13,7 @@ from torch.utils.data import Dataset
 from hb_ssl.utils.box import mask_to_bbox
 from hb_ssl.processing import BODY_THRESHOLD, sample_patches
 
-AMOS_DATA_DIR = '/path/to/preprocessed_amos_mri_dataset/'
+AMOS_DATA_DIR = '/home/kats/storage/staff/eytankats/projects/hierarchical_dense_ssl/data/downstream/amos/'
 AMOS_LABELS = {
     1: 'Spleen',
     2: 'Right kidney',
@@ -50,7 +50,7 @@ AMOS_DATA_SPLIT_8 = [
     'splits/amos_mri_8_fold4.json'
 ]
 
-BTCV_DATA_DIR = '/path/to/preprocessed_btcv_dataset/'
+BTCV_DATA_DIR = '/home/kats/storage/staff/eytankats/projects/hierarchical_dense_ssl/data/downstream/btcv/'
 BTCV_LABELS = {
     1: 'Spleen',
     2: 'Right kidney',
